@@ -4,25 +4,6 @@ if ($env:VIRTUAL_ENV) {
     & deactivate
 }
 
-# # Run pip freeze and capture the output
-# $pipOutput = & pip freeze
-
-# # Check if modules are found in the output
-# if ($pipOutput) {
-#     Write-Host " "
-#     Write-Host -ForegroundColor Yellow -Object "============================================================="
-#     Write-Host -ForegroundColor Yellow -Object "Modules installed outside the virtual environment were found."
-#     Write-Host -ForegroundColor Yellow -Object "This can cause issues. Please review the installed modules."
-#     Write-Host " "
-#     Write-Host -ForegroundColor Yellow -Object "You can deinstall all the local modules with:"
-#     Write-Host " "
-#     Write-Host -ForegroundColor Blue -Object "deactivate"
-#     Write-Host -ForegroundColor Blue -Object "pip freeze > uninstall.txt"
-#     Write-Host -ForegroundColor Blue -Object "pip uninstall -y -r uninstall.txt"
-#     Write-Host -ForegroundColor Yellow -Object "============================================================="
-#     Write-Host " "
-# } 
-
 # Activate the virtual environment
 # Write-Host "Activating the virtual environment..."
 & .\venv\Scripts\activate
@@ -33,6 +14,12 @@ $env:PATH += ";$($MyInvocation.MyCommand.Path)\venv\Lib\site-packages\torch\lib"
 
 # Validate the requirements and store the exit code
 python.exe .\setup\validate_requirements.py
+
+# Check the exit code and stop execution if it is not 0
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Failed to validate requirements. Exiting script..."
+    exit $LASTEXITCODE
+}
 
 # If the exit code is 0, read arguments from gui_parameters.txt (if it exists)
 # and run the kohya_gui.py script with the command-line arguments

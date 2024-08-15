@@ -50,10 +50,10 @@ def main_menu(platform_requirements_file):
     log.info("If this operation ever runs too long, you can rerun this script in verbose mode to check.")
 
     setup_common.check_repo_version()
-    setup_common.check_python()
+    # setup_common.check_python()
 
     # Upgrade pip if needed
-    setup_common.install('--upgrade pip')
+    setup_common.install('pip')
     setup_common.install_requirements(platform_requirements_file, check_no_verify_flag=False, show_stdout=True)
     configure_accelerate()
 
@@ -61,6 +61,10 @@ def main_menu(platform_requirements_file):
 if __name__ == '__main__':
     setup_common.ensure_base_requirements()
     setup_common.setup_logging()
+    if not setup_common.check_python_version():
+        exit(1)
+    
+    setup_common.update_submodule()
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--platform-requirements-file', dest='platform_requirements_file', default='requirements_runpod.txt', help='Path to the platform-specific requirements file')

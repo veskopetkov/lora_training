@@ -15,10 +15,10 @@ def main_menu(platform_requirements_file, show_stdout: bool = False, no_run_acce
     log.info("If this operation ever runs too long, you can rerun this script in verbose mode to check.")
     
     setup_common.check_repo_version()
-    setup_common.check_python()
+    # setup_common.check_python()
 
     # Upgrade pip if needed
-    setup_common.install('--upgrade pip')
+    setup_common.install('pip')
     setup_common.install_requirements(platform_requirements_file, check_no_verify_flag=False, show_stdout=show_stdout)
     if not no_run_accelerate:
         setup_common.configure_accelerate(run_accelerate=False)
@@ -27,6 +27,14 @@ def main_menu(platform_requirements_file, show_stdout: bool = False, no_run_acce
 if __name__ == '__main__':
     setup_common.ensure_base_requirements()
     setup_common.setup_logging()
+    if not setup_common.check_python_version():
+        exit(1)
+    
+    setup_common.update_submodule()
+    
+    # setup_common.clone_or_checkout(
+    #     "https://github.com/kohya-ss/sd-scripts.git", tag_version, "sd-scripts"
+    # )
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--platform-requirements-file', dest='platform_requirements_file', default='requirements_linux.txt', help='Path to the platform-specific requirements file')
